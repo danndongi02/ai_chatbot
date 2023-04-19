@@ -1,0 +1,4 @@
+__pycache__/
+.env
+server/env/
+worker/worker_env/
