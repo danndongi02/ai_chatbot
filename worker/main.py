@@ -3,37 +3,40 @@ import asyncio
 from src.model.gptj import GPT
 from src.redis.cache import Cache
 from src.schema.chat import Message
+import os
+from dotenv import load_dotenv
 
 redis = Redis()
+load_dotenv()
 
 
 async def main():
     json_client = redis.create_rejson_connection()
 
-    await Cache(json_client).add_message_to_cache(token="4299457f-c453-44db-bcf1-dbafe6880ba5",
+    await Cache(json_client).add_message_to_cache(token=os.environ['TEST_USER_TOKEN'],
                                                   source="human",
                                                   message_data={
-                                                      "id": "5",
-                                                      "msg": "What's your favorite hobby?",
+                                                      "id": "2",
+                                                      "msg": "What's cooking?",
                                                       "timestamp": "2023-02-22 01:08:59.530218"
-                                                  })
+    })
 
-    data = await Cache(json_client).get_chat_history(token="4299457f-c453-44db-bcf1-dbafe6880ba5")
+    data = await Cache(json_client).get_chat_history(token=os.environ['TEST_USER_TOKEN'])
 
     print(data)
 
     message_data = data['messages'][-4:]
-    input = ["" + i['msg'] for i in message_data]
-    input = " ".join(input)
+    _input = ["" + i['msg'] for i in message_data]
+    _input = " ".join(_input)
 
-    res = GPT().query(input=input)
+    res = GPT().query(input=_input)
 
     msg = Message(
-        msg=res
+        msg=res # type: ignore
     )
 
     print(msg)
-    await Cache(json_client).add_message_to_cache(token="4299457f-c453-44db-bcf1-dbafe6880ba5",
+    await Cache(json_client).add_message_to_cache(token=os.environ['TEST_USER_TOKEN'],
                                                   source="bot",
                                                   message_data=msg.dict())
 
