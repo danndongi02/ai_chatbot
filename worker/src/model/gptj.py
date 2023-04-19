@@ -24,18 +24,18 @@ class GPT:
         self.payload["inputs"] = input
         data = json.dumps(self.payload)
         response = requests.request(
-            "POST", self.url, headers=self.headers, data=data
+            "POST", self.url, headers=self.headers, data=data  # type: ignore
         )
-        # data = json.loads(response.content.decode("utf-8"))
+        data = json.loads(response.content.decode("utf-8"))
 
-        print(json.loads(response.content.decode("utf-8")))
-        return json.loads(response.content.decode("utf-8"))
+        # print(json.loads(response.content.decode("utf-8")))
+        # return json.loads(response.content.decode("utf-8"))
 
-        # text = data[0]['generated_text']
-        # res = str(text.split("Human:")[0]).strip("\n").strip()
+        text = data[0]['generated_text']
+        res = str(text.split("Human:")[0]).strip("\n").strip()
 
-        # print(res)
-        # return res
+        print(res)
+        return res  # type: ignore
 
 
 if __name__ == "__main__":
